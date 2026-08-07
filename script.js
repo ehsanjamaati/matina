@@ -105,7 +105,13 @@ const teaseButton = document.getElementById('teaseButton');
 const skipPhone = document.getElementById('skipPhone');
 
 function normalizePhone(value) {
-  return value.replace(/[\s()-]/g, '').replace(/^\+98/, '0').replace(/^0098/, '0');
+  let phone = value.replace(/\D/g, '');
+
+  if (phone.startsWith('0098')) phone = phone.slice(4);
+  else if (phone.startsWith('98')) phone = phone.slice(2);
+
+  if (/^9\d{9}$/.test(phone)) phone = `0${phone}`;
+  return phone;
 }
 
 async function sendAnswers() {
@@ -131,7 +137,7 @@ phoneForm.addEventListener('submit', async (event) => {
   const submitButton = phoneForm.querySelector('[type="submit"]');
   const phone = normalizePhone(phoneInput.value);
   if (!/^09\d{9}$/.test(phone)) {
-    phoneError.textContent = 'شماره رو کامل و به شکل 09xxxxxxxxx بنویس';
+    phoneError.textContent = 'شماره رو کامل بنویس؛ با 09 یا 9 شروع کن';
     phoneInput.focus();
     return;
   }
